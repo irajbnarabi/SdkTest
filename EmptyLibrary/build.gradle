@@ -11,7 +11,7 @@ android {
         minSdk 21
         targetSdk 31
         versionCode 1
-        versionName "1.0"
+        versionName "1.0.0-SNAPSHOT"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles "consumer-rules.pro"
@@ -31,6 +31,19 @@ android {
         jvmTarget = '1.8'
     }
 }
+plugins.withId("com.vanniktech.maven.publish") {
+    mavenPublish {
+        sonatypeHost = "S01"
+    }
+}
+//ext {
+//    PUBLISH_GROUP_ID = 'io.github.irajbnarabi'
+//    PUBLISH_VERSION = '1.0.0'
+//    PUBLISH_ARTIFACT_ID = 'SdkTest'
+//}
+//
+//apply from: "${rootProject.projectDir}/scripts/publish-module.gradle"
+apply plugin: "com.vanniktech.maven.publish"
 
 dependencies {
 
@@ -40,4 +53,17 @@ dependencies {
     testImplementation 'junit:junit:4.+'
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
+}
+
+
+publishing {
+    repositories {   // by default upload tasks points to the legacy URl which will be down on sunset and all new repos should use the one similar to below.
+        repositories {
+            maven {
+                def releasesRepoUrl = "$buildDir/repos/releases"
+                def snapshotsRepoUrl = "$buildDir/repos/snapshots"
+                url = version.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
+            }
+        }
+    }
 }
